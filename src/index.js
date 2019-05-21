@@ -54,23 +54,27 @@ L.Control.EasyPrint = L.Control.extend({
     if (!this.options.hidden) {
       this._addCss();
 
-      L.DomEvent.addListener(container, 'mouseover', this._togglePageSizeButtons, this);
-      L.DomEvent.addListener(container, 'mouseout', this._togglePageSizeButtons, this);
-
+      
       var btnClass = 'leaflet-control-easyPrint-button'
-      if (this.options.exportOnly) btnClass = btnClass + '-export'
-
+      if (this.options.exportOnly) btnClass = btnClass + '-export CurrentSize'
+      
       this.link = L.DomUtil.create('a', btnClass, container);
       this.link.id = "leafletEasyPrint";
       this.link.title = this.options.title;
       this.holder = L.DomUtil.create('ul', 'easyPrintHolder', container);
-
-      this.options.sizeModes.forEach(function (sizeMode) {
-        var btn = L.DomUtil.create('li', 'easyPrintSizeMode', this.holder);
-        btn.title = sizeMode.name;
-        var link = L.DomUtil.create('a', sizeMode.className, btn);
-        L.DomEvent.addListener(btn, 'click', this.printMap, this);
-      }, this);
+      
+      if (this.options.exportOnly) {
+        L.DomEvent.addListener(this.link, "click", this.printMap, this);
+      } else {
+        L.DomEvent.addListener(container, 'mouseover', this._togglePageSizeButtons, this);
+        L.DomEvent.addListener(container, 'mouseout', this._togglePageSizeButtons, this);
+        this.options.sizeModes.forEach(function (sizeMode) {
+          var btn = L.DomUtil.create('li', 'easyPrintSizeMode', this.holder);
+          btn.title = sizeMode.name;
+          var link = L.DomUtil.create('a', sizeMode.className, btn);
+          L.DomEvent.addListener(btn, 'click', this.printMap, this);
+        }, this);
+      }
 
       L.DomEvent.disableClickPropagation(container);
     }
@@ -111,9 +115,8 @@ L.Control.EasyPrint = L.Control.extend({
     if (this.options.hideClasses) {
       this._toggleClasses(this.options.hideClasses);
     }
-    var sizeMode = typeof event !== 'string' ? event.target.className : event;
-    if (sizeMode === 'CurrentSize') {
-      return this._printOpertion(sizeMode);
+    if (this.options.exportOnly) {
+      return this._printOpertion("CurrentSize");
     }
     this.outerContainer = this._createOuterContainer(this.mapContainer)
     if (this.originalState.widthWasAuto) {
