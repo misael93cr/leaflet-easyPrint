@@ -1,7 +1,7 @@
 {
-  "name": "leaflet-easyprint",
+  "name": "leaflet-easyprint-forked",
   "version": "2.1.8",
-  "description": "A leaflet plugin which adds an icon to print the map",
+  "description": "This is based on leaflet-easyprint. A leaflet plugin which adds an icon to print the map",
   "main": "dist/bundle.js",
   "repository": {
     "type": "git",
